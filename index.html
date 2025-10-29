@@ -1,0 +1,168 @@
+<head>
+    <meta charset="UTF-8">
+    <title>きせかえゲーム</title>
+
+    <!-- OGP (Open Graph Protocol) タグ -->
+    <meta property="og:title" content="きせかえゲーム">
+    <meta property="og:description" content="かわいいキャラクターを自由にコーディネート！お気に入りのコーデでファッションショーも開催できるよ！">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://example.com/dressup-game/"> <!-- ★ここに公開するページのURLを記載 -->
+    <meta property="og:image" content="https://example.com/dressup-game/images/ogp_image.png"> <!-- ★ここにサムネイル画像のURLを記載 -->
+    <meta property="og:site_name" content="きせかえゲーム">
+
+    <!-- Twitterカード タグ -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="きせかえゲーム">
+    <meta name="twitter:description" content="かわいいキャラクターを自由にコーディネート！お気に入りのコーデでファッションショーも開催できるよ！">
+    <meta name="twitter:image" content="https://example.com/dressup-game/images/ogp_image.png"> <!-- ★ここにサムネイル画像のURLを記載 -->
+
+    <script src="js/phaser.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- メインの着せ替え画面 -->
+    <div id="main-screen">
+        <div id="game-container"></div>
+        <div id="ui-container">
+            <h2>きせかえ</h2>
+            <div id="character-switcher">
+                <button id="switch-char-btn" class="char-button">キャラクターきりかえ</button>
+            </div>
+            <div id="category-tabs">
+                <button class="category-button active" data-category="hair">かみ</button>
+                <button class="category-button" data-category="outer">うわぎ</button>
+                <button class="category-button" data-category="inner">シャツ</button>
+                <button class="category-button" data-category="bottom">ズボン</button>
+                <button class="category-button" data-category="shoes">くつ</button>
+                <button class="category-button" data-category="accA">アクセA</button>
+                <button class="category-button" data-category="accB">アクセB</button>
+                <button class="category-button" data-category="background">はいけい</button>
+            </div>
+            <div id="item-list"></div>
+            
+            <div id="action-buttons">
+                <button id="register-btn-main" class="custom-button register-button">とうろく</button>
+                <button id="view-favorites-btn-main" class="custom-button favorites-button">お気に入り</button>
+                <button id="download-btn" class="custom-button download-button">ダウンロード</button>
+                <button id="reset-all" class="custom-button reset-button">リセット</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- お気に入り一覧画面 (最初は非表示) -->
+    <div id="favorites-screen" class="hidden">
+        <div class="favorites-header">
+    <h2>お気に入りコーデ</h2>
+    <div class="header-buttons">
+        <button id="start-show-setup-btn" class="custom-button register-button">ファッションショー</button>
+        <button id="back-to-main-btn" class="back-button">もどる</button>
+    </div>
+</div>
+        <div id="favorites-list" class="favorites-grid">
+            <!-- ここにコーデが動的に追加されます -->
+        </div>
+    </div>
+
+    <!-- お気に入りモーダル (最初は非表示) -->
+    <div id="favorites-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="register-favorite-btn" class="modal-button register">このコーデをとうろく</button>
+            <button id="view-favorites-btn" class="modal-button view">お気に入りをみる</button>
+            <button id="close-favorites-modal-btn" class="modal-button close">とじる</button>
+        </div>
+    </div>
+
+    <!-- お気に入り詳細画面 (最初は非表示) -->
+    <div id="favorite-detail-screen" class="modal-overlay hidden">
+        <div class="favorite-detail-content">
+            <div id="favorite-detail-preview">
+                <!-- ここに拡大プレビューが動的に追加されます -->
+            </div>
+            <div id="favorite-detail-controls">
+                <div id="favorite-name-container">
+                    <h3 id="favorite-name-display">お気に入りコーデ</h3>
+                    <input type="text" id="favorite-name-input" class="hidden" maxlength="15">
+                </div>
+                <button id="save-favorite-name-btn" class="custom-button save-button hidden">この名前で保存</button>
+                <button id="download-favorite-btn" class="custom-button download-button">ダウンロード</button>
+                <button id="apply-favorite-btn" class="custom-button favorites-button">このコーデからきせかえ</button>
+                <button id="back-to-favorites-btn" class="custom-button reset-button">もどる</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 汎用通知・確認モーダル (最初は非表示) -->
+    <div id="alert-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <p id="alert-message"></p>
+            <div id="alert-buttons">
+                <button id="alert-ok-btn" class="modal-button register">OK</button>
+                <button id="alert-confirm-btn" class="modal-button register">はい</button>
+                <button id="alert-cancel-btn" class="modal-button close">いいえ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ダウンロードオプションモーダル (最初は非表示) -->
+    <div id="download-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <p style="text-align: center; font-size: 22px; color: #555; margin: 0 0 20px;">
+                はいけいをどうしますか？
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <button id="download-with-bg-btn" class="modal-button register">はいけい あり</button>
+                <button id="download-without-bg-btn" class="modal-button view">はいけい なし</button>
+                <button id="download-cancel-btn" class="modal-button close">やめる</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="view-controls">
+        <button id="zoom-in-btn" title="拡大">+</button>
+        <button id="zoom-out-btn" title="縮小">-</button>
+        <button id="fullscreen-btn" title="フルスクリーン">F</button>
+    </div>
+
+<!-- ファッションショー準備モーダル (最初は非表示) -->
+    <div id="show-setup-modal" class="modal-overlay hidden">
+        <div class="show-setup-content">
+            <h3>ファッションショーのじゅんび</h3>
+            <div class="show-setup-input">
+                <label for="show-title-input">ショーのタイトル</label>
+                <input type="text" id="show-title-input" placeholder="すてきなショーのなまえ" maxlength="20">
+            </div>
+            <div class="show-setup-selection">
+                <p>コーデを3つえらんでね (<span id="show-selected-count">0</span>/3)</p>
+                <div id="show-favorites-grid" class="favorites-grid">
+                    <!-- ここにお気に入りコーデが動的に追加されます -->
+                </div>
+            </div>
+            <div class="show-setup-buttons">
+                <button id="start-show-btn" class="modal-button register" disabled>ショーをはじめる</button>
+                <button id="close-show-setup-btn" class="modal-button close">もどる</button>
+            </div>
+        </div>
+    </div>
+    
+ <div id="fashion-show-screen" class="hidden">
+        <div id="show-background"></div>
+        <!-- ★キラキラエフェクト用のコンテナを追加 -->
+    <div id="sparkle-container"></div>
+        <div id="show-character-area">
+            <!-- ここにコーデが表示されます -->
+        </div>
+        <div id="show-caption-box">
+            <p id="show-caption-text"></p>
+        </div>
+    </div>
+
+    <div id="view-controls">
+
+    <script src="js/game.js"></script>
+
+</body>
+</html>
