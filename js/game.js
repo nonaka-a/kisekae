@@ -889,10 +889,11 @@ function setupUI(scene, x, y) {
         switchCharacter(newCharId);
     });
 
-    const applyZoom = () => {
+  const applyZoom = () => {
         const scaleValue = `scale(${currentScale})`;
         mainScreen.style.transform = scaleValue;
         favoritesScreen.style.transform = scaleValue;
+        favoriteDetailScreen.style.transform = scaleValue;
     };
 
     zoomInBtn.addEventListener('click', () => {

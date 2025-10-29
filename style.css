@@ -447,6 +447,8 @@ body {
 /* お気に入り詳細画面 */
 .favorite-detail-content {
     display: flex;
+    flex-wrap: wrap; /* 画面が狭い時に縦に並ぶように */
+    justify-content: center; /* 中央揃え */
     align-items: center;
     gap: 40px;
     background-color: #fff;
@@ -456,11 +458,15 @@ body {
     box-shadow: 
         0 16px 48px rgba(236, 112, 163, 0.3),
         0 0 0 12px #ffb3c6;
+    width: 95%; /* 画面幅の95%を使う */
+    max-width: 1100px; /* PCなどでは最大1100pxまで */
+    box-sizing: border-box;
 }
 
 #favorite-detail-preview {
-    width: 600px;
-    height: 850px;
+    flex: 1 1 500px; /* flexアイテムとして伸縮させる */
+    max-width: 600px; /* 最大幅は600px */
+    aspect-ratio: 600 / 850; /* 縦横比を維持 */
     position: relative;
     overflow: hidden;
     border-radius: 24px;
@@ -474,10 +480,16 @@ body {
 }
 
 #favorite-detail-controls {
-    width: 400px;
+    flex: 1 1 350px; /* flexアイテムとして伸縮させる */
+    max-width: 400px; /* 最大幅は400px */
     display: flex;
     flex-direction: column;
     gap: 15px;
+}
+/* 拡大縮小を滑らかにするための設定を追加 */
+#favorite-detail-screen {
+    transition: transform 0.2s ease-in-out;
+    transform-origin: center center;
 }
 
 #favorite-detail-controls .custom-button {
