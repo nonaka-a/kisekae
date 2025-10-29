@@ -74,7 +74,10 @@ function preload() {
     this.load.image('head_base_02', 'head_base_02.png');
     for (const category in ITEMS) {
         ITEMS[category].forEach(item => {
-            item.parts.forEach(partName => this.load.image(partName, `${partName}.png`));
+            item.parts.forEach(partName => {
+                const extension = (category === 'background') ? '.jpg' : '.png';
+                this.load.image(partName, `${partName}${extension}`);
+            });
             if (item.previewImage) {
                 this.load.image(item.previewImage, `${item.previewImage}.png`);
             }
@@ -170,9 +173,6 @@ function setupUI(scene, x, y) {
     const fashionShowScreen = document.getElementById('fashion-show-screen');
     const showCharacterArea = document.getElementById('show-character-area');
     const showCaptionText = document.getElementById('show-caption-text');
-    
-    // index.htmlに追加したダウンロードモーダル用の要素
-    const downloadModal = document.getElementById('download-modal');
 
     let selectedFavorite = null;
     let selectedFavoriteIndex = -1;
@@ -274,8 +274,9 @@ function setupUI(scene, x, y) {
             } 
             else {
                 item.parts.forEach(partName => {
+                    const extension = (category === 'background') ? '.jpg' : '.png';
                     const img = document.createElement('img');
-                    img.src = `images/${partName}.png`;
+                    img.src = `images/${partName}${extension}`;
                     img.alt = item.name;
                     if (partName.includes('hair_back')) img.className = 'preview-hair-back';
                     else if (partName.includes('hair_front')) img.className = 'preview-hair-front';
@@ -354,6 +355,7 @@ function setupUI(scene, x, y) {
                     const itemData = ITEMS[category].find(i => i.id === itemId);
                     if (itemData) {
                         itemData.parts.forEach(partName => {
+                            const extension = (category === 'background') ? '.jpg' : '.png';
                             const key = partName.replace(/_\d+/g, '').toUpperCase();
                             let depth = 0;
                             if (category === 'accA') {
@@ -365,7 +367,7 @@ function setupUI(scene, x, y) {
                             } else {
                                 depth = DEPTH[key] || 0;
                             }
-                            preview.innerHTML += `<img src="images/${partName}.png" style="z-index: ${depth}">`;
+                            preview.innerHTML += `<img src="images/${partName}${extension}" style="z-index: ${depth}">`;
                         });
                     }
                 }
@@ -413,6 +415,7 @@ function setupUI(scene, x, y) {
                 const itemData = ITEMS[category].find(i => i.id === itemId);
                 if (itemData) {
                     itemData.parts.forEach(partName => {
+                        const extension = (category === 'background') ? '.jpg' : '.png';
                         const key = partName.replace(/_\d+/g, '').toUpperCase();
                         let depth = 0;
                         if (category === 'accA') {
@@ -424,7 +427,7 @@ function setupUI(scene, x, y) {
                         } else {
                             depth = DEPTH[key] || 0;
                         }
-                        previewHTML += `<img src="images/${partName}.png" style="z-index: ${depth}">`;
+                        previewHTML += `<img src="images/${partName}${extension}" style="z-index: ${depth}">`;
                     });
                 }
             }
@@ -505,13 +508,14 @@ function setupUI(scene, x, y) {
                     const itemData = ITEMS[category].find(i => i.id === itemId);
                     if (itemData) {
                         itemData.parts.forEach(partName => {
+                            const extension = (category === 'background') ? '.jpg' : '.png';
                             const key = partName.replace(/_\d+/g, '').toUpperCase();
                             let depth = 0;
                             if (category === 'accA') depth = DEPTH.ACC_A;
                             else if (category === 'accB') depth = DEPTH.ACC_B;
                             else if (category === 'background') depth = DEPTH.BACKGROUND;
                             else depth = DEPTH[key] || 0;
-                            preview.innerHTML += `<img src="images/${partName}.png" style="z-index: ${depth}">`;
+                            preview.innerHTML += `<img src="images/${partName}${extension}" style="z-index: ${depth}">`;
                         });
                     }
                 }
@@ -679,12 +683,13 @@ function setupUI(scene, x, y) {
                 const itemData = ITEMS[category].find(i => i.id === itemId);
                 if (itemData) {
                     itemData.parts.forEach(partName => {
+                        const extension = (category === 'background') ? '.jpg' : '.png';
                         const key = partName.replace(/_\d+/g, '').toUpperCase();
                         let depth = 0;
                         if (category === 'accA') depth = DEPTH.ACC_A;
                         else if (category === 'accB') depth = DEPTH.ACC_B;
                         else depth = DEPTH[key] || 0;
-                        partsToRender.push({ src: `images/${partName}.png`, zIndex: depth });
+                        partsToRender.push({ src: `images/${partName}${extension}`, zIndex: depth });
                     });
                 }
             }
