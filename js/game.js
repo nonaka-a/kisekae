@@ -625,34 +625,34 @@ function setupUI(scene, x, y) {
 
         // 導入
         showCaption(`さあ、はじまりました！「${title}」！！<br>今日もとってもステキなコーデ3つをみなさんにご紹介します！`, showCaptionText);
-        await wait(4000);
+        await wait(6000);
 
         // 3. innerHTMLの書き換えをせず、クラスの付け替えで表示を制御
         
         // コーデ1
         coordElements[0].classList.add('active');
         showCaption(`エントリーナンバー1！「${coords[0].name || 'すてきなコーデ'}」<br>${shuffledComments[0]}`, showCaptionText);
-        await wait(5000);
+        await wait(7000);
         coordElements[0].classList.remove('active');
         await wait(1000);
 
         // コーデ2
         coordElements[1].classList.add('active');
         showCaption(`つづいては、「${coords[1].name || 'かわいいコーデ'}」！<br>${shuffledComments[1]}`, showCaptionText);
-        await wait(5000);
+        await wait(7000);
         coordElements[1].classList.remove('active');
         await wait(1000);
 
         // コーデ3
         coordElements[2].classList.add('active');
         showCaption(`さいごは、「${coords[2].name || 'おしゃれなコーデ'}」！<br>${shuffledComments[2]}`, showCaptionText);
-        await wait(5000);
+        await wait(7000);
         coordElements[2].classList.remove('active');
         await wait(1000);
 
         // 締め
         showCaption(`みなさん、「${title}」いかがでしたか？<br>また、次のファッションショーでお会いしましょう！さようなら〜！`, showCaptionText);
-        await wait(4000);
+        await wait(6000);
         
         fashionShowScreen.classList.remove('visible');
         await wait(500);
