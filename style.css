@@ -607,7 +607,9 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     width: 90%;
     max-width: 1000px;
-    height: 80vh;
+    /* height: 80vh; を削除し、max-heightに変更 */
+    max-height: 85vh;
+    box-sizing: border-box; /* paddingを含めた高さ計算に */
     display: flex;
     flex-direction: column;
 }
@@ -649,7 +651,9 @@ body {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    min-height: 0; /* flexアイテムがコンテンツで不必要に伸びるのを防ぐ */
 }
+
 
 .show-setup-selection p {
     text-align: center;
@@ -663,7 +667,10 @@ body {
     border-radius: 18px;
     padding: 15px;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    overflow-y: auto; /* コンテンツが溢れた場合にスクロールバーを表示 */
+    flex-grow: 1;     /* 親要素の残りの高さを埋める */
 }
+
 
 #show-favorites-grid .favorite-card {
     border: 5px solid transparent;
