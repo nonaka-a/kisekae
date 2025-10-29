@@ -554,18 +554,8 @@ function setupUI(scene, x, y) {
     // --- ファッションショー進行ロジック ---
     const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    const typeWriter = async (text, element) => {
-        const lines = text.split('<br>');
-        element.innerHTML = '';
-        for (let i = 0; i < lines.length; i++) {
-            for (let j = 0; j < lines[i].length; j++) {
-                element.innerHTML += lines[i].charAt(j);
-                await wait(50);
-            }
-            if (i < lines.length - 1) {
-                element.innerHTML += '<br>';
-            }
-        }
+    const showCaption = (text, element) => {
+        element.innerHTML = text;
     };
 
     const startFashionShow = async (title, coords) => {
@@ -634,36 +624,34 @@ function setupUI(scene, x, y) {
         await wait(1000);
 
         // 導入
-        await typeWriter(`さあ、はじまりました！「${title}」！！<br>今日もとってもステキなコーデ3つをみなさんにご紹介します！`, showCaptionText);
+        showCaption(`さあ、はじまりました！「${title}」！！<br>今日もとってもステキなコーデ3つをみなさんにご紹介します！`, showCaptionText);
         await wait(4000);
 
         // 3. innerHTMLの書き換えをせず、クラスの付け替えで表示を制御
         
         // コーデ1
         coordElements[0].classList.add('active');
-        await typeWriter(`エントリーナンバー1！「${coords[0].name || 'すてきなコーデ'}」<br>${shuffledComments[0]}`, showCaptionText);
+        showCaption(`エントリーナンバー1！「${coords[0].name || 'すてきなコーデ'}」<br>${shuffledComments[0]}`, showCaptionText);
         await wait(5000);
         coordElements[0].classList.remove('active');
         await wait(1000);
 
         // コーデ2
         coordElements[1].classList.add('active');
-        await typeWriter(`つづいては、「${coords[1].name || 'かわいいコーデ'}」！<br>${shuffledComments[1]}`, showCaptionText);
+        showCaption(`つづいては、「${coords[1].name || 'かわいいコーデ'}」！<br>${shuffledComments[1]}`, showCaptionText);
         await wait(5000);
         coordElements[1].classList.remove('active');
         await wait(1000);
 
         // コーデ3
         coordElements[2].classList.add('active');
-        await typeWriter(`さいごは、「${coords[2].name || 'おしゃれなコーデ'}」！<br>${shuffledComments[2]}`, showCaptionText);
+        showCaption(`さいごは、「${coords[2].name || 'おしゃれなコーデ'}」！<br>${shuffledComments[2]}`, showCaptionText);
         await wait(5000);
         coordElements[2].classList.remove('active');
         await wait(1000);
-        
-        // --- ★変更点ここまで ---
 
         // 締め
-        await typeWriter(`みなさん、「${title}」いかがでしたか？<br>また、次のファッションショーでお会いしましょう！さようなら〜！`, showCaptionText);
+        showCaption(`みなさん、「${title}」いかがでしたか？<br>また、次のファッションショーでお会いしましょう！さようなら〜！`, showCaptionText);
         await wait(4000);
         
         fashionShowScreen.classList.remove('visible');
