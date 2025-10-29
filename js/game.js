@@ -600,18 +600,26 @@ function setupUI(scene, x, y) {
             [shuffledComments[i], shuffledComments[j]] = [shuffledComments[j], shuffledComments[i]];
         }
 
-        // ファッションショー開始時にキャプションをクリア
-        showCaptionText.innerHTML = '';
+        // --- ★ここからが大きな変更点 ---
+        
+        // 1. ショーが始まる前に、3つのコーデのHTML要素をすべて生成してDOMに追加
+        showCharacterArea.innerHTML = ''; // まずは中身を空にする
+        coords.forEach(coord => {
+            showCharacterArea.innerHTML += createCoordHTML(coord);
+        });
+        const coordElements = showCharacterArea.children; // 生成した3つのコーデ要素を取得
 
+        // 2. その他の準備
+        showCaptionText.innerHTML = '';
         const sparkleContainer = document.getElementById('sparkle-container');
-        sparkleContainer.innerHTML = ''; // 前回のキラキラをクリア
-        for (let i = 0; i < 20; i++) { // 20個生成
+        sparkleContainer.innerHTML = ''; 
+        for (let i = 0; i < 20; i++) { 
             const sparkle = document.createElement('div');
             sparkle.className = 'sparkle';
             sparkle.style.left = `${Math.random() * 100}%`;
             sparkle.style.top = `${Math.random() * 100}%`;
             sparkle.style.animationDelay = `${Math.random() * 3}s`;
-            sparkle.style.animationDuration = `${2 + Math.random() * 2}s`; // 2〜4秒でアニメーション
+            sparkle.style.animationDuration = `${2 + Math.random() * 2}s`;
             sparkleContainer.appendChild(sparkle);
         }
 
@@ -629,32 +637,30 @@ function setupUI(scene, x, y) {
         await typeWriter(`さあ、はじまりました！「${title}」！！<br>今日もとってもステキなコーデ3つをみなさんにご紹介します！`, showCaptionText);
         await wait(4000);
 
+        // 3. innerHTMLの書き換えをせず、クラスの付け替えで表示を制御
+        
         // コーデ1
-        showCharacterArea.innerHTML = createCoordHTML(coords[0]);
-        await wait(100);
-        showCharacterArea.querySelector('.show-coord').classList.add('active');
+        coordElements[0].classList.add('active');
         await typeWriter(`エントリーナンバー1！「${coords[0].name || 'すてきなコーデ'}」<br>${shuffledComments[0]}`, showCaptionText);
         await wait(5000);
-        showCharacterArea.querySelector('.show-coord').classList.remove('active');
+        coordElements[0].classList.remove('active');
         await wait(1000);
 
         // コーデ2
-        showCharacterArea.innerHTML = createCoordHTML(coords[1]);
-        await wait(100);
-        showCharacterArea.querySelector('.show-coord').classList.add('active');
+        coordElements[1].classList.add('active');
         await typeWriter(`つづいては、「${coords[1].name || 'かわいいコーデ'}」！<br>${shuffledComments[1]}`, showCaptionText);
         await wait(5000);
-        showCharacterArea.querySelector('.show-coord').classList.remove('active');
+        coordElements[1].classList.remove('active');
         await wait(1000);
 
         // コーデ3
-        showCharacterArea.innerHTML = createCoordHTML(coords[2]);
-        await wait(100);
-        showCharacterArea.querySelector('.show-coord').classList.add('active');
+        coordElements[2].classList.add('active');
         await typeWriter(`さいごは、「${coords[2].name || 'おしゃれなコーデ'}」！<br>${shuffledComments[2]}`, showCaptionText);
         await wait(5000);
-        showCharacterArea.querySelector('.show-coord').classList.remove('active');
+        coordElements[2].classList.remove('active');
         await wait(1000);
+        
+        // --- ★変更点ここまで ---
 
         // 締め
         await typeWriter(`みなさん、「${title}」いかがでしたか？<br>また、次のファッションショーでお会いしましょう！さようなら〜！`, showCaptionText);
@@ -664,7 +670,7 @@ function setupUI(scene, x, y) {
         await wait(500);
         fashionShowScreen.classList.add('hidden');
         
-        sparkleContainer.innerHTML = ''; // キラキラを削除
+        sparkleContainer.innerHTML = '';
 
         if (showBGM && showBGM.isPlaying) {
             showBGM.stop();
