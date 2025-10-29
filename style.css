@@ -738,7 +738,7 @@ body {
     width: 100%;
     height: 100%;
     /* ★ここのコメントアウトを外す */
-    background-image: url('../images/show_background.jpg');
+    background-image: url('images/show_background.jpg');
     background-size: cover;
     background-position: center;
 }
