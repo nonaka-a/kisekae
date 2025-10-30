@@ -824,14 +824,13 @@ function setupUI(scene, x, y) {
     });
 
     // --- ダウンロード処理 ---
+    const downloadModal = document.getElementById('download-modal');
     const downloadWithBgBtn = document.getElementById('download-with-bg-btn');
     const downloadWithoutBgBtn = document.getElementById('download-without-bg-btn');
     const downloadCancelBtn = document.getElementById('download-cancel-btn');
     let downloadTarget = null; // 'main' or 'favorite'
 
-    // ダウンロード処理の本体を関数化
-    // ダウンロード処理の本体を関数化
-    const handleDownload = (withBackground) => {
+    const handleDownload = (withBackground, downloadModal) => {
         downloadModal.classList.add('hidden');
 
         // ユーザーエージェントでモバイル端末（特にiOS）かどうかを簡易的に判定
@@ -908,8 +907,8 @@ function setupUI(scene, x, y) {
     });
 
     // モーダル内のボタン
-    downloadWithBgBtn.addEventListener('click', () => handleDownload(true));
-    downloadWithoutBgBtn.addEventListener('click', () => handleDownload(false));
+    downloadWithBgBtn.addEventListener('click', () => handleDownload(true, downloadModal));
+    downloadWithoutBgBtn.addEventListener('click', () => handleDownload(false, downloadModal));
     downloadCancelBtn.addEventListener('click', () => {
         downloadModal.classList.add('hidden');
     });
