@@ -435,14 +435,13 @@ function setupUI(scene, x, y) {
         favoriteDetailPreview.innerHTML = previewHTML;
     }
 
-    async function downloadElementAsImage(element, filename, includeBackground = true) {
+    async function downloadElementAsImage(element, filename, includeBackground = true, returnDataUrl = false) {
         const canvas = document.createElement('canvas');
         canvas.width = 600;
         canvas.height = 850;
         const context = canvas.getContext('2d');
         let images = Array.from(element.getElementsByTagName('img'));
 
-        // 背景なしの場合、背景画像を除外する
         if (!includeBackground) {
             images = images.filter(img => (parseInt(img.style.zIndex) || 0) !== DEPTH.BACKGROUND);
         }
@@ -469,15 +468,23 @@ function setupUI(scene, x, y) {
                                   centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
             });
             const dataURL = canvas.toDataURL('image/png');
+
+            if (returnDataUrl) {
+                return dataURL; // データURLを返す
+            }
+
+            // returnDataUrlがfalseの場合のみ、直接ダウンロードを実行（このロジックは現状使われないが念のため残す）
             const link = document.createElement('a');
             link.href = dataURL;
             link.download = filename;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+
         } catch (error) {
             console.error('Error creating image from favorite:', error);
             showAlert('画像の作成に失敗しました。');
+            return null;
         }
     }
 
@@ -823,45 +830,69 @@ function setupUI(scene, x, y) {
     let downloadTarget = null; // 'main' or 'favorite'
 
     // ダウンロード処理の本体を関数化
+    // ダウンロード処理の本体を関数化
     const handleDownload = (withBackground) => {
         downloadModal.classList.add('hidden');
 
-        if (downloadTarget === 'main') {
-            const filename = `my-coordinate-${withBackground ? 'with' : 'no'}-bg.png`;
-            if (withBackground) {
-                // 背景あり: そのままCanvasのデータを書き出す
-                const dataURL = game.canvas.toDataURL('image/png');
+        // ユーザーエージェントでモバイル端末（特にiOS）かどうかを簡易的に判定
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        // 画像データを取得する処理を関数化
+        const getImageData = (callback) => {
+            if (downloadTarget === 'main') {
+                if (withBackground) {
+                    const dataURL = game.canvas.toDataURL('image/png');
+                    callback(dataURL);
+                } else {
+                    const bgSprite = partSprites[currentParts.background] ? partSprites[currentParts.background][0] : null;
+                    const mainCamera = game.scene.scenes[0].cameras.main;
+                    const originalBgColor = mainCamera.backgroundColor.rgba;
+                    
+                    if (bgSprite) bgSprite.setVisible(false);
+                    mainCamera.setBackgroundColor('transparent');
+                    
+                    game.renderer.snapshot(image => {
+                        callback(image.src);
+                        if (bgSprite) bgSprite.setVisible(true);
+                        mainCamera.setBackgroundColor(originalBgColor);
+                    });
+                }
+            } else if (downloadTarget === 'favorite') {
+                // downloadElementAsImage を改造して DataURL を返すようにする
+                (async () => {
+                    const dataURL = await downloadElementAsImage(favoriteDetailPreview, null, withBackground, true);
+                    if (dataURL) {
+                        callback(dataURL);
+                    }
+                })();
+            }
+        };
+
+        // 画像データを取得した後の処理
+        getImageData(dataURL => {
+            if (!dataURL) return; // データ取得に失敗した場合は何もしない
+
+            if (isMobile) {
+                // モバイルの場合：新しいタブで画像を開く
+                const newTab = window.open();
+                if (newTab) {
+                    newTab.document.body.innerHTML = `<img src="${dataURL}" style="max-width:100%; height:auto;">`;
+                    showAlert('あたらしいタブでがぞうをひらきました。\nがぞうを長押しして保存してください。');
+                } else {
+                    // ポップアップがブロックされた場合
+                    showAlert('ポップアップがブロックされました。\nブラウザの設定でポップアップを許可してください。');
+                }
+            } else {
+                // PCの場合：従来通りダウンロード
+                const filename = `${downloadTarget}-coordinate-${withBackground ? 'with' : 'no'}-bg.png`;
                 const link = document.createElement('a');
                 link.href = dataURL;
                 link.download = filename;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-            } else {
-                // 背景なし: 背景を透過してスナップショット
-                const bgSprite = partSprites[currentParts.background] ? partSprites[currentParts.background][0] : null;
-                const mainCamera = game.scene.scenes[0].cameras.main;
-                const originalBgColor = mainCamera.backgroundColor.rgba;
-                
-                if (bgSprite) bgSprite.setVisible(false);
-                mainCamera.setBackgroundColor('transparent');
-                
-                game.renderer.snapshot(image => {
-                    const link = document.createElement('a');
-                    link.href = image.src;
-                    link.download = filename;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    
-                    if (bgSprite) bgSprite.setVisible(true);
-                    mainCamera.setBackgroundColor(originalBgColor);
-                });
             }
-        } else if (downloadTarget === 'favorite') {
-            const filename = `favorite-coordinate-${withBackground ? 'with' : 'no'}-bg.png`;
-            downloadElementAsImage(favoriteDetailPreview, filename, withBackground);
-        }
+        });
     };
     
     // メイン画面のダウンロードボタン
