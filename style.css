@@ -26,6 +26,7 @@ body {
 /* UIエリアのコンテナ */
 #ui-container {
     width: 800px;
+    height: 850px; /* ゲーム画面の高さに合わせる */
     background-color: #ffffff;
     padding: 25px 40px;
     box-sizing: border-box;
