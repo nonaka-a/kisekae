@@ -13,7 +13,7 @@ const DEPTH = {
     ACC_A: 70 // アクセA (最前面)
 };
 // ★変更点：backgroundのアイテム数を1に変更（background_01.pngを想定）
-const ITEM_COUNTS = { hair: 5, outer: 4, inner: 7, bottom: 8, shoes: 7, accA: 3, accB: 1, background: 6 };
+const ITEM_COUNTS = { hair: 6, outer: 4, inner: 8, bottom: 9, shoes: 8, accA: 3, accB: 2, background: 7 };
 let ITEMS = {};
 const FAVORITES_KEY = 'myDressUpFavorites';
 
