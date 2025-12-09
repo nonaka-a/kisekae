@@ -4,8 +4,8 @@ const DEPTH = {
     ACC_B: 5, // アクセB (背景のすぐ上)
     HAIR_BACK: 10,
     BODY: 20,
-    BOTTOM: 30,
-    SHOES: 35,
+    BOTTOM: 35,
+    SHOES: 30,
     INNER: 40,
     OUTER: 45,
     HEAD: 50,
